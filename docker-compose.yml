@@ -1,0 +1,44 @@
+#replace goappmaker.com with your domain.com & save
+
+version: "3"
+
+services:
+   odoo_db_goappmaker.com:
+     image: postgres:10
+     volumes:
+      - odoo_data_goappmaker.com:/var/lib/postgresql/data/pgdata
+     restart: always
+     environment:
+       POSTGRES_DB: postgres
+       POSTGRES_PASSWORD: odoo
+       POSTGRES_USER: odoo
+     container_name: odoo_db_goappmaker.com
+
+   odoo_goappmaker.com:
+     depends_on:
+       - odoo_db_goappmaker.com
+     build: .
+     expose:
+       - 8069
+     volumes:
+      - odoo_web_data_goappmaker.com:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+     restart: always
+     environment:
+       VIRTUAL_HOST: goappmaker.com
+       VIRTUAL_NETWORK: nginx-proxy
+       VIRTUAL_PORT: 8069     
+       LETSENCRYPT_HOST: 'goappmaker.com'
+       LETSENCRYPT_EMAIL: 'info@goappmaker.com'
+     container_name: odoo_goappmaker.com
+  
+volumes:
+  odoo_web_data_goappmaker.com:
+  odoo_data_goappmaker.com:
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
+
