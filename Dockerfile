@@ -1,8 +1,6 @@
-# our base image
-FROM python:3-onbuild
-
-# specify the port number the container should expose
+FROM python:alpine3.7
+COPY . /odoo
+WORKDIR /odoo
+RUN pip install -r requirements.txt
 EXPOSE 8069
-
-# run the application
-CMD ["python3", "./odoo-bin"]
+CMD python ./odoo-bin
